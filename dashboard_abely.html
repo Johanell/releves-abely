@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Trésorerie ABELY 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bleu:#1F3864;--bleu2:#2E75B6;--vert:#375623;--vert2:#9BBB59;--orange:#C55A11;--rouge:#C00000;--gris:#f4f6fa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:var(--gris);color:#222}
+header{background:var(--bleu);color:#fff;padding:16px 32px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:1.35rem;letter-spacing:.04em}
+.meta{font-size:.78rem;opacity:.75;margin-top:3px}
+.badge{display:inline-block;background:rgba(255,255,255,.15);border-radius:10px;padding:2px 9px;font-size:.72rem;margin-left:8px}
+.container{max-width:1280px;margin:0 auto;padding:22px 18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:20px}
+.kpi{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 5px rgba(0,0,0,.08);border-left:5px solid var(--bleu2)}
+.kpi.vert{border-left-color:var(--vert2)}.kpi.rouge{border-left-color:var(--rouge)}.kpi.orange{border-left-color:var(--orange)}
+.kpi label{font-size:.72rem;text-transform:uppercase;color:#666;letter-spacing:.05em}
+.kpi .val{font-size:1.65rem;font-weight:700;margin-top:4px;color:var(--bleu)}
+.kpi .val.neg{color:var(--rouge)}.kpi .val.pos{color:var(--vert)}
+.kpi .sub{font-size:.72rem;color:#888;margin-top:3px}
+.alerte{border-radius:8px;padding:9px 15px;margin-bottom:7px;font-size:.86rem}
+.alerte.rouge{background:#ffe0e0;border-left:4px solid var(--rouge);color:#800000}
+.alerte.orange{background:#fff3cd;border-left:4px solid var(--orange);color:#7a4000}
+.alerte.vert{background:#e6f4ea;border-left:4px solid var(--vert2);color:#235222}
+.alerte-wrap{margin-bottom:18px}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.card{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.card.full{grid-column:1/-1}
+.card h3{font-size:.82rem;color:var(--bleu);margin-bottom:12px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid #e8ecf4;padding-bottom:7px}
+canvas{max-height:270px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+th{background:var(--bleu);color:#fff;padding:7px 9px;text-align:right;white-space:nowrap;font-weight:600}
+th:first-child{text-align:left}
+tr:nth-child(even) td{background:#f8f9fb}
+td{padding:5px 9px;text-align:right;border-bottom:1px solid #eee;white-space:nowrap}
+td:first-child{text-align:left;color:#444;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+td.neg{color:var(--rouge)}td.pos{color:var(--vert)}td.prev{color:#999;font-style:italic}
+.tfoot td{font-weight:700;border-top:2px solid #bbb;background:#eef2fa!important}
+.legend{display:flex;gap:14px;margin-bottom:8px;font-size:.76rem;flex-wrap:wrap}
+.dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
+footer{text-align:center;padding:18px;color:#aaa;font-size:.74rem;border-top:1px solid #e0e0e0;margin-top:10px}
+@media(max-width:700px){.charts{grid-template-columns:1fr}.card.full{grid-column:1}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Dashboard Trésorerie — ABELY 2026</h1>
+    <div class="meta">Données réelles : Jan → Mai 2026
+      <span class="badge">■ Réel</span>
+      <span class="badge" style="background:rgba(155,187,89,.3)">■ Prévisionnel</span>
+    </div>
+  </div>
+  <div style="font-size:.82rem;opacity:.8">Mis à jour le 12/06/2026</div>
+</header>
+
+<div class="container">
+
+<div class="kpis">
+  <div class="kpi vert">
+    <label>Trésorerie Mai</label>
+    <div class="val pos">8,998 €</div>
+    <div class="sub">Solde initial 01/01 : 5,056 €</div>
+  </div>
+  <div class="kpi vert">
+    <label>Résultat net Mai</label>
+    <div class="val pos">5,180 €</div>
+    <div class="sub">Entrées moins toutes charges</div>
+  </div>
+  <div class="kpi rouge">
+    <label>Projection tréso Déc 2026</label>
+    <div class="val neg">-5,771 €</div>
+    <div class="sub">Basé sur prévisionnel annuel</div>
+  </div>
+  <div class="kpi orange">
+    <label>Total entrées 2026</label>
+    <div class="val">49,241 €</div>
+    <div class="sub">Charges totales : 60,067 €</div>
+  </div>
+</div>
+
+<div class="alerte-wrap"><div class="alerte rouge">⚠ Résultat négatif en <b>Fév</b> : -3.579,18 € </div><div class="alerte rouge">⚠ Résultat négatif en <b>Mar</b> : -1.386,38 € </div></div>
+
+<div class="charts">
+
+<div class="card full">
+  <h3>Entrées vs Charges (Jan → Déc)</h3>
+  <div class="legend">
+    <span><span class="dot" style="background:#375623"></span>Entrées réelles</span>
+    <span><span class="dot" style="background:rgba(155,187,89,.7)"></span>Entrées prévisionnelles</span>
+    <span><span class="dot" style="background:#2E75B6"></span>Charges fixes</span>
+    <span><span class="dot" style="background:#C55A11"></span>Charges variables</span>
+  </div>
+  <canvas id="cEC"></canvas>
+</div>
+
+<div class="card">
+  <h3>Trésorerie cumulée (€)</h3>
+  <canvas id="cTR"></canvas>
+</div>
+
+<div class="card">
+  <h3>Résultat net mensuel (€)</h3>
+  <canvas id="cRES"></canvas>
+</div>
+
+<div class="card">
+  <h3>Répartition des charges 2026</h3>
+  <canvas id="cPIE"></canvas>
+</div>
+
+<div class="card">
+  <h3>Charges fixes vs Variables par mois</h3>
+  <canvas id="cCV"></canvas>
+</div>
+
+</div>
+
+<div class="card" style="margin-bottom:22px">
+  <h3>Tableau synthèse mensuel</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Indicateur</th><th>Jan</th><th>Fév</th><th>Mar</th><th>Avr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Aoû</th><th>Sep</th><th>Oct</th><th>Nov</th><th>Déc</th><th>TOTAL</th></tr></thead>
+    <tbody id="tb"></tbody>
+    <tfoot id="tf"></tfoot>
+  </table></div>
+</div>
+
+</div>
+<footer>ABELY — Dashboard trésorerie 2026 • Généré le 12/06/2026 depuis Releves_ABELY_2025_2026.xlsx</footer>
+
+<script>
+const MO=["Jan", "F\u00e9v", "Mar", "Avr", "Mai", "Jun", "Jul", "Ao\u00fb", "Sep", "Oct", "Nov", "D\u00e9c"],NR=5;
+const EN=[8773.14, 4016.66, 3989.66, 5416.66, 11933.67, 0.0, 2477.89, 6316.53, 6316.53, 0.0, 0.0, 0.0],CF=[-3748.31, -3874.68, -3868.26, -2540.02, -5345.51, -3181.94, -2607.11, -2327.3, -3046.97, -2327.3, -2327.3, -2327.3],CV=[-2408.29, -3721.16, -1507.78, -1765.46, -1408.52, -1676.29, -1676.29, -1676.29, -1676.29, -1676.29, -1676.29, -1676.29],CH=[-6156.6, -7595.84, -5376.04, -4305.48, -6754.03, -4858.23, -4283.4, -4003.59, -4723.26, -4003.59, -4003.59, -4003.59];
+const RE=[2616.54, -3579.18, -1386.38, 1111.18, 5179.64, -4858.23, -1805.51, 2312.94, 1593.27, -4003.59, -4003.59, -4003.59],TR=[7672.47, 4093.29, 2706.91, 3818.09, 8997.73, 4139.5, 2333.99, 4646.93, 6240.2, 2236.61, -1766.98, -5770.57];
+const CL=["Loyer", "Salaires", "Charges sociales", "Assurances", "Pr\u00eat", "Prestataires", "Logiciels", "Frais bancaires", "TVA & fiscal", "Tesla & VE", "Restaurants", "Publicit\u00e9", "Apple", "Divers"],CV2=[1600.0, 12871.92, 7993.0, 6196.71, 3919.96, 3616.8, 1375.07, 1891.74, 14627.0, 1590.17, 2007.36, 388.42, 642.23, 1346.86];
+
+function fmt(v){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',minimumFractionDigits:2}).format(v)}
+function clr(v,i,pos,posP,neg,negP){return v>=0?(i<NR?pos:posP):(i<NR?neg:negP)}
+
+// Entrées vs Charges
+new Chart(document.getElementById('cEC'),{type:'bar',data:{labels:MO,datasets:[
+  {label:'Entrées',data:EN,backgroundColor:MO.map((_,i)=>i<NR?'rgba(55,86,35,.85)':'rgba(155,187,89,.5)'),borderColor:MO.map((_,i)=>i<NR?'#375623':'#9BBB59'),borderWidth:1},
+  {label:'Charges fixes',data:CF.map(v=>-v),backgroundColor:MO.map((_,i)=>i<NR?'rgba(46,117,182,.78)':'rgba(46,117,182,.3)'),borderColor:'#2E75B6',borderWidth:1},
+  {label:'Charges variables',data:CV.map(v=>-v),backgroundColor:MO.map((_,i)=>i<NR?'rgba(197,90,17,.78)':'rgba(197,90,17,.3)'),borderColor:'#C55A11',borderWidth:1},
+]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+' : '+fmt(Math.abs(c.raw))}}},scales:{y:{ticks:{callback:v=>fmt(Math.abs(v))}}}}
+});
+
+// Trésorerie cumulée
+new Chart(document.getElementById('cTR'),{type:'line',data:{labels:MO,datasets:[{
+  label:'Trésorerie cumulée',data:TR,
+  backgroundColor:'rgba(31,56,100,.1)',borderColor:'#1F3864',borderWidth:2,fill:true,tension:.35,
+  pointBackgroundColor:TR.map(v=>v>=0?'#1F3864':'#C00000'),pointRadius:5
+}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},scales:{y:{ticks:{callback:v=>fmt(v)},grid:{color:'#e8ecf4'}},x:{grid:{display:false}}}}
+});
+
+// Résultat net
+new Chart(document.getElementById('cRES'),{type:'bar',data:{labels:MO,datasets:[{
+  label:'Résultat net',data:RE,
+  backgroundColor:RE.map((v,i)=>clr(v,i,'rgba(55,86,35,.85)','rgba(155,187,89,.5)','rgba(192,0,0,.8)','rgba(192,0,0,.35)')),
+  borderColor:RE.map(v=>v>=0?'#375623':'#C00000'),borderWidth:1
+}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},scales:{y:{ticks:{callback:v=>fmt(v)}}}}
+});
+
+// Camembert
+const PC=['#1F3864','#2E75B6','#375623','#9BBB59','#C55A11','#ED7D31','#4472C4','#70AD47','#FF0000','#7030A0','#00B050','#FFC000','#FF7C80','#5A5A5A'];
+new Chart(document.getElementById('cPIE'),{type:'doughnut',data:{labels:CL,datasets:[{data:CV2,backgroundColor:PC,borderWidth:1}]},
+options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:12,padding:6}},tooltip:{callbacks:{label:c=>c.label+' : '+fmt(c.raw)}}}}
+});
+
+// CF vs CV
+new Chart(document.getElementById('cCV'),{type:'bar',data:{labels:MO,datasets:[
+  {label:'Charges fixes',data:CF.map(v=>-v),backgroundColor:MO.map((_,i)=>i<NR?'rgba(46,117,182,.8)':'rgba(46,117,182,.35)'),borderColor:'#2E75B6',borderWidth:1,stack:'ch'},
+  {label:'Charges variables',data:CV.map(v=>-v),backgroundColor:MO.map((_,i)=>i<NR?'rgba(197,90,17,.8)':'rgba(197,90,17,.35)'),borderColor:'#C55A11',borderWidth:1,stack:'ch'},
+]},options:{responsive:true,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+' : '+fmt(c.raw)}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>fmt(v)}}}}
+});
+
+// Tableau
+const ROWS=[['Entrées',EN,'pos'],['Charges fixes',CF.map(v=>-v),'neg'],['Charges variables',CV.map(v=>-v),'neg']];
+let tb='';
+ROWS.forEach(([l,d,cl])=>{
+  const tot=d.reduce((a,b)=>a+b,0);
+  tb+=`<tr><td>${l}</td>${d.map((v,i)=>`<td class="${cl}${i>=NR?' prev':''}">${fmt(v)}</td>`).join('')}<td class="${cl}">${fmt(tot)}</td></tr>`;
+});
+document.getElementById('tb').innerHTML=tb;
+let tf=`<tr class="tfoot"><td>Résultat net</td>${RE.map((v,i)=>`<td class="${v>=0?'pos':'neg'}${i>=NR?' prev':''}">${fmt(v)}</td>`).join('')}<td class="${RE.reduce((a,b)=>a+b,0)>=0?'pos':'neg'}">${fmt(RE.reduce((a,b)=>a+b,0))}</td></tr>`;
+tf+=`<tr class="tfoot"><td>Tréso cumulée</td>${TR.map((v,i)=>`<td class="${v>=0?'pos':'neg'}${i>=NR?' prev':''}">${fmt(v)}</td>`).join('')}<td class="${TR[11]>=0?'pos':'neg'}">${fmt(TR[11])}</td></tr>`;
+document.getElementById('tf').innerHTML=tf;
+</script>
+</body></html>
